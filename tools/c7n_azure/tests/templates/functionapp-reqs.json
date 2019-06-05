@@ -10,7 +10,7 @@
       "apiVersion": "2015-05-01-preview",
       "type": "Microsoft.Storage/storageAccounts",
       "name": "[variables('storageAccountName')]",
-      "location": "westus2",
+      "location": "[resourceGroup().location]",
       "properties": {
         "accountType": "Standard_LRS"
       }
@@ -19,7 +19,7 @@
       "apiVersion": "2016-09-01",
       "name": "[variables('appHostingPlanName')]",
       "type": "Microsoft.Web/serverfarms",
-      "location": "westus2",
+      "location": "[resourceGroup().location]",
       "properties": {
         "name": "[variables('appHostingPlanName')]",
         "workerSizeId": "0",
@@ -37,7 +37,7 @@
       "apiVersion": "2015-05-01",
       "name": "cloud-custodian-test",
       "type": "microsoft.insights/components",
-      "location": "westus2",
+      "location": "[resourceGroup().location]",
       "tags": {
         "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', 'cloud-custodian-test')]": "Resource"
       },
@@ -47,11 +47,22 @@
       }
     },
     {
+        "apiVersion": "2015-05-01",
+        "name": "cloud-custodian-app-insights",
+        "type": "Microsoft.Insights/components",
+        "kind": "web",
+        "location": "[resourceGroup().location]",
+        "properties": {
+            "Application_Type": "web",
+            "ApplicationId": "[variables('functionAppName')]"
+        }
+    },
+    {
       "type": "Microsoft.Web/sites",
       "kind": "functionapp,linux,container",
       "name": "[variables('functionAppName')]",
       "apiVersion": "2016-08-01",
-      "location": "westus2",
+      "location": "[resourceGroup().location]",
       "dependsOn": [
         "[resourceId('Microsoft.Web/serverfarms', variables('appHostingPlanName'))]",
         "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
@@ -60,10 +71,6 @@
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appHostingPlanName'))]",
         "siteConfig": {
           "appSettings": [
-            {
-              "name": "AzureWebJobsDashboard",
-              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2018-07-01').keys[0].value)]"
-            },
             {
               "name": "AzureWebJobsStorage",
               "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2018-07-01').keys[0].value)]"

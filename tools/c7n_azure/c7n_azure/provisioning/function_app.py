@@ -46,7 +46,6 @@ class FunctionAppDeploymentUnit(DeploymentUnit):
         # general app settings
         con_string = params['storage_account_connection_string']
         site_config.app_settings.append(azure_name_value_pair('AzureWebJobsStorage', con_string))
-        site_config.app_settings.append(azure_name_value_pair('AzureWebJobsDashboard', con_string))
         site_config.app_settings.append(azure_name_value_pair('FUNCTIONS_EXTENSION_VERSION',
                                                               FUNCTION_EXT_VERSION))
         site_config.app_settings.append(azure_name_value_pair('FUNCTIONS_WORKER_RUNTIME', 'python'))
